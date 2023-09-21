@@ -24,6 +24,8 @@ rules = yara.compile(filepaths=file_dict)
 LOGGING_FILE_NAME = config["LOGGING"]["FileSystemLoggingName"]
 LOGGING_FILE_PATH = os.path.join(os.getcwd(),LOGGING_FILE_NAME)
 
+if not os.path.exists(LOGGING_FILE_PATH): open(LOGGING_FILE_PATH,"w")
+
 logging.basicConfig(filename=LOGGING_FILE_PATH,level=logging.INFO,format='%(asctime)s - %(message)s')
 
 class SystemFileHandler(FileSystemEventHandler):
