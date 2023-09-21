@@ -4,7 +4,6 @@ certifi==2023.7.22
 click==8.1.7
 dnspython==2.4.2
 email-validator==2.0.0.post2
-ember @ git+https://github.com/elastic/ember.git@d97a0b523de02f3fe5ea6089d080abacab6ee931
 fastapi==0.103.1
 h11==0.14.0
 httpcore==0.18.0
