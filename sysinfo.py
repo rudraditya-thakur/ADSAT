@@ -44,52 +44,55 @@ def cpuInfo():
         "Min Frequency" : f"{cpufreq.min:.2f}Mhz",
         "Current Frequency" : f"{cpufreq.current:.2f}Mhz"
     }
-    print("CPU Usage Per Core:")
     for i, percentage in enumerate(psutil.cpu_percent(percpu=True, interval=1)):
-        print(f"Core {i}: {percentage}%")
-    print(f"Total CPU Usage: {psutil.cpu_percent()}%")
+        info[f"Core {i}"] = f"{percentage}%"
+    info["Total CPU Usage"] = f"{psutil.cpu_percent()}%"
+    return info
 
 @router.get("/memInfo")
 def memInfo():
-    #get the memory details
     svmem = psutil.virtual_memory()
-    print(f"Total: {get_size(svmem.total)}")
-    print(f"Available: {get_size(svmem.available)}")
-    print(f"Used: {get_size(svmem.used)}")
-    print(f"Percentage: {svmem.percent}%")
-    print("="*20, "SWAP", "="*20)
-    # get the swap memory details (if exists)
     swap = psutil.swap_memory()
-    print(f"Total: {get_size(swap.total)}")
-    print(f"Free: {get_size(swap.free)}")
-    print(f"Used: {get_size(swap.used)}")
-    print(f"Percentage: {swap.percent}%")
+    info = {
+        "Virtual Memomry": 
+            {"Total" : f"{get_size(svmem.total)}",
+            "Available" : f"{get_size(svmem.available)}",
+            "Used" : f"{get_size(svmem.used)}",
+            "Percentage" : f"{svmem.percent}%"},
+        "swap":
+            {"Total" : f"{get_size(swap.total)}",
+            "Free" : f"{get_size(swap.free)}",
+            "Used" : f"{get_size(swap.used)}",
+            "Percentage" : f"{swap.percent}%"}
+    }
+    return info
 
 @router.get("/diskInfo")
 def diskInfo():
-    print("Partitions and Usage:")
-    # get all disk partitions
     partitions = psutil.disk_partitions()
+    i = 0
+    info = {}
     for partition in partitions:
-        print(f"=== Device: {partition.device} ===")
-        print(f"  Mountpoint: {partition.mountpoint}")
-        print(f"  File system type: {partition.fstype}")
+        a = {}
+        i += 1
+        a = { "Device" : f"{partition.device}",
+        "Mountpoint" : f"{partition.mountpoint}",
+        "File system type" : f"{partition.fstype}"}
         try:
             partition_usage = psutil.disk_usage(partition.mountpoint)
         except PermissionError:
-            # this can be catched due to the disk that
-            # isn't ready
             continue
-        print(f"  Total Size: {get_size(partition_usage.total)}")
-        print(f"  Used: {get_size(partition_usage.used)}")
-        print(f"  Free: {get_size(partition_usage.free)}")
-        print(f"  Percentage: {partition_usage.percent}%")
-    # get IO statistics since boot
+        a["Total Size"] = f"{get_size(partition_usage.total)}"
+        a["Used"] = f"{get_size(partition_usage.used)}"
+        a["Free"] = f"{get_size(partition_usage.free)}"
+        a["Percentage"] = f"{partition_usage.percent}%"
+        info[f"Device{i}"] = a
     disk_io = psutil.disk_io_counters()
-    print(f"Total read: {get_size(disk_io.read_bytes)}")
-    print(f"Total write: {get_size(disk_io.write_bytes)}")
+    info["Total read"] =  f"{get_size(disk_io.read_bytes)}"
+    info["Total write"] =  f"{get_size(disk_io.write_bytes)}"
+    return info
 
-@router.get("/netInterfacesInfo")
+# @router.get("/netInterfacesInfo")
 def netInterfacesInfo():
     # get all network interfaces (virtual and physical)
     if_addrs = psutil.net_if_addrs()
