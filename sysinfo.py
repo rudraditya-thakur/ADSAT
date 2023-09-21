@@ -30,11 +30,6 @@ def bootInfo():
     bt = datetime.fromtimestamp(boot_time_timestamp)
     return{"Boot Time" :  f"{bt.year}/{bt.month}/{bt.day} {bt.hour}:{bt.minute}:{bt.second}"}
 
-@router.get("/userInfo")
-def usersInfo():
-    users = psutil.users()
-    print(users)
-
 @router.get("/cpuInfo")
 def cpuInfo():
     cpufreq = psutil.cpu_freq()

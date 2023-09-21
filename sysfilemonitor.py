@@ -1,5 +1,4 @@
 import os
-import re
 import configparser
 import time
 import logging
@@ -11,7 +10,6 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 
 YARA_FILE_PATH = os.path.join(os.getcwd(),config["YARA"]["FolderName"])
-pattern = r'\.(.*)'
 file_dict = {}
 i = 0
 for root, _, files in os.walk(YARA_FILE_PATH):
@@ -66,7 +64,6 @@ if __name__ == "__main__":
     observer = Observer()
     observer.schedule(SystemFileHandler(),path,recursive=True if config["DEFAULT"]["MonitorSubdirectories"] == "yes" else False)
     observer.start()
-
     try:
         while True:
             time.sleep(1)
