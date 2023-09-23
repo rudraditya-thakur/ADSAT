@@ -159,9 +159,8 @@ class SystemFileHandler(FileSystemEventHandler):
                     try:
                         matches = rules.match(event.src_path)
                         if matches:
-                            logging.info(f"Matched YARA rule in {event.src_path}:", end=" ")
                             for match in matches:
-                                logging.info(f"Rule: {match.rule}")
+                                logging.info(f"Matched YARA rule in {event.src_path} [{match.rule}]")
                     except yara.Error as e:
                         logging.error(f"YARA Matching Error: {e}")
             elif event.is_directory:
